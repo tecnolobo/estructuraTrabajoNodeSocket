@@ -1,47 +1,47 @@
-//Refreencias
-const lbOnline  = document.querySelector('#lbOnline');
-const lbOffline =document.querySelector('#lbOffline');
 
+// Referencias del HTML
+const lblOnline  = document.querySelector('#lblOnline');
+const lblOffline = document.querySelector('#lblOffline');
 const txtMensaje = document.querySelector('#txtMensaje');
-const btnEnviar = document.querySelector('#btnEnviar');
+const btnEnviar  = document.querySelector('#btnEnviar');
 
 
-const sokcetCliente = io();
-
-sokcetCliente.on('connect',()=>{
-
-  console.log('Conectado');
-  lbOffline.style.display='none';
-  lbOnline.style.display='';
+const socket = io();
 
 
 
-});
+socket.on('connect', () => {
+    // console.log('Conectado');
 
-sokcetCliente.on('disconnect',()=>{
-
-  lbOnline.style.display='none';
-  lbOffline.style.display='';
-  
-});
-
-btnEnviar.addEventListener('click',()=>{
-
-  const mensaje = txtMensaje.value;
-  const payload = {
-    mensaje,
-    id:'asdas',
-    fecha: new Date().getTime()
-  }
-  
-  //Envair un mnesaje al servidor
-  sokcetCliente.emit('enviar-mensaje-cliente',payload,(id)=>{
-    console.log('el id=',id);
-  });
+    lblOffline.style.display = 'none';
+    lblOnline.style.display  = '';
 
 });
 
-//revcibir mensaje del servidor
-sokcetCliente.on('enviar-mensaje-server',(payload)=>{
-  console.log(payload);
+socket.on('disconnect', () => {
+    // console.log('Desconectado del servidor');
+
+    lblOnline.style.display  = 'none';
+    lblOffline.style.display = '';
+});
+
+
+socket.on('enviar-mensaje', (payload) => {
+    console.log( payload )
+})
+
+
+btnEnviar.addEventListener( 'click', () => {
+
+    const mensaje = txtMensaje.value;
+    const payload = {
+        mensaje,
+        id: '123ABC',
+        fecha: new Date().getTime()
+    }
+    
+    socket.emit( 'enviar-mensaje', payload, ( id ) => {
+        console.log('Desde el server', id );
+    });
+
 });
